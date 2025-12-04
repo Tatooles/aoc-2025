@@ -12,7 +12,7 @@ const main = async () => {
       //   console.log(s, e);
 
       for (let i = s; i <= e; i++) {
-        checkValidity(i);
+        checkValidityDualPointers(i);
       }
     });
 
@@ -30,6 +30,22 @@ const checkValidity = (id: number) => {
   if (firstHalf === secondHalf) {
     invalidSum += id;
   }
+};
+
+const checkValidityDualPointers = (id: number) => {
+  const str = id.toString();
+
+  let invalid = true;
+
+  const half = str.length / 2;
+
+  for (let i = 0; i < half; i++) {
+    if (str[i] !== str[i + half]) {
+      invalid = false;
+    }
+  }
+
+  if (invalid) invalidSum += id;
 };
 
 console.time("execution time");
