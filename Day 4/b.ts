@@ -18,10 +18,10 @@ const main = async () => {
 
   let total = 0;
 
-  let x = 0;
+  let removal = [];
 
   // We need a while loop for this
-  while (x < 1000) {
+  while (true) {
     for (let i = 0; i < arr.length; i++) {
       for (let j = 0; j < arr[0].length; j++) {
         if (arr[i][j] === "@") {
@@ -29,21 +29,19 @@ const main = async () => {
             total++;
             // Mark for deletion
             arr[i][j] = "x";
+            removal.push([i, j]);
           }
         }
       }
     }
 
-    // Remove xs
-    for (let i = 0; i < arr.length; i++) {
-      for (let j = 0; j < arr[0].length; j++) {
-        if (arr[i][j] === "x") {
-          arr[i][j] = ".";
-          // Mark for deletion
-        }
-      }
+    if (!removal.length) break;
+
+    for (const r of removal) {
+      arr[r[0]][r[1]] = ".";
     }
-    x++;
+
+    removal = [];
   }
 
   print();
