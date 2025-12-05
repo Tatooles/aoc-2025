@@ -34,7 +34,7 @@ const checkSpace = (arr: string[][], i: number, j: number) => {
       if (arr[i + neighbor[0]][j + neighbor[1]] === "@") {
         adjacentRolls++;
       }
-    } catch (e) {
+    } catch (_e) {
       // This neighbor is out of bounds so skip
       continue;
     }
