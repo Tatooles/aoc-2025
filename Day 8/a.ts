@@ -1,34 +1,58 @@
 let array: number[][];
 
 const main = async () => {
-  const input = await Deno.readTextFile("test.txt");
+  const input = await Deno.readTextFile("input.txt");
 
-  // This is the master source of data that we will not modify
-  // Can just pass around references to this
   array = input.split(/\n/).map((x) => x.split(",").map(Number));
 
-  findClosest(array);
-
-  console.log(array);
-};
-
-const findClosest = (array: number[][]) => {
-  let closest = Number.MAX_SAFE_INTEGER;
-  let pair: number[] = [];
+  const connections: number[][] = [];
 
   for (let i = 0; i < array.length; i++) {
     for (let j = i + 1; j < array.length; j++) {
       const distance = calculateDistance(array[i], array[j]);
-      if (distance < closest) {
-        closest = distance;
-        pair = [i, j];
-      }
+      connections.push([i, j, distance]);
     }
   }
 
-  console.log(array[pair[0]], array[pair[1]]);
+  connections.sort((a, b) => a[2] - b[2]);
 
-  return pair;
+  const circuits: number[][] = [];
+
+  // each group will be a circuit
+  for (let i = 0; i < 1000; i++) {
+    const connection = connections[i];
+    const firstPointLocation = circuits.findIndex((x) =>
+      x.includes(connection[0])
+    );
+
+    const secondPointLocation = circuits.findIndex((x) =>
+      x.includes(connection[1])
+    );
+
+    if (firstPointLocation === -1 && secondPointLocation === -1) {
+      circuits.push([connection[0], connection[1]]);
+    } else if (firstPointLocation !== -1 && secondPointLocation === -1) {
+      circuits[firstPointLocation].push(connection[1]);
+    } else if (secondPointLocation !== -1 && firstPointLocation === -1) {
+      circuits[secondPointLocation].push(connection[0]);
+    } else if (
+      firstPointLocation !== -1 &&
+      secondPointLocation !== -1 &&
+      firstPointLocation !== secondPointLocation
+    ) {
+      // If both points are found in separate circuits, we need to connect the groups!!!!
+      circuits[firstPointLocation] = circuits[firstPointLocation].concat(
+        circuits[secondPointLocation]
+      );
+      // Now delete secondPointLocation circuit
+      circuits.splice(secondPointLocation, 1);
+    }
+  }
+
+  circuits.sort((a, b) => b.length - a.length);
+
+  // console.log(connections);
+  console.log(circuits[0].length * circuits[1].length * circuits[2].length);
 };
 
 const calculateDistance = (a: number[], b: number[]) => {
